@@ -1,0 +1,157 @@
+pizza={'ГАВАЙСКАЯ': {'consist': ['курица',
+                           'ветчина',
+                           'ананас',
+                           'моцарелла',
+                           'томатный соус'],
+               'size_price': {'M': 595, 'S': 415}},
+ 'МАРГАРИТА': {'consist': ['томаты', 'моцарелла', 'томатный соус'],
+               'size_price': {'M': 545, 'S': 395}},
+ 'ПЕППЕРОНИ': {'consist': ['пепперони', 'моцарелла', 'томатный соус'],
+               'size_price': {'M': 545, 'S': 395}}}
+
+pizza_order =[]
+zakaz=[]
+d=dict()
+import tkinter
+import tkinter.ttk
+
+window = tkinter.Tk()
+
+window.geometry("500x300")
+window.title("Заказ пиццы")
+f1='ПЕППЕРОНИ'
+f2='МАРГАРИТА'
+f3='ГАВАЙСКАЯ'
+
+label1=tkinter.Label(window, text="Выберете пиццы")
+label1.grid(row=0,column=0)
+
+label2=tkinter.Label(window, text="Выберете размер")
+label2.grid(row=0,column=1)
+
+label3=tkinter.Label(window, text="Выберете кол-во")
+label3.grid(row=0,column=2)
+
+label4=tkinter.Label(window, text=f1)
+label4.grid(row=1,column=0)
+
+label5=tkinter.Label(window, text=f2)
+label5.grid(row=2,column=0)
+
+label6=tkinter.Label(window, text=f3)
+label6.grid(row=3,column=0)
+
+label7=tkinter.Label(window, text="Введите время заказа")
+label7.grid(row=4,column=0)
+
+label8=tkinter.Label(window, text="Введите адрес заказа")
+label8.grid(row=4,column=1)
+
+label9=tkinter.Label(window, text="Введите ваш номер телефона")
+label9.grid(row=4,column=2)
+
+label10=tkinter.Label(window, text="Сумма заказа")
+label10.grid(row=6,column=1)
+
+combobox1 = tkinter.ttk.Combobox(window,values = ['S', 'M'] )
+combobox1.grid(row=1,column=1)
+
+spinbox2 = tkinter.Spinbox(window, from_=0, to=20)
+spinbox2.grid(row=1,column=2)
+
+combobox3 = tkinter.ttk.Combobox(window,values = ['S', 'M'] )
+combobox3.grid(row=2,column=1)
+
+spinbox4 = tkinter.Spinbox(window, from_=0, to=20)
+spinbox4.grid(row=2,column=2)
+
+spinbox5 = tkinter.Spinbox(window, from_=0, to=20)
+spinbox5.grid(row=3,column=2)
+
+combobox6 = tkinter.ttk.Combobox(window,values = ["S", "M"] )
+combobox6.grid(row=3,column=1)
+
+entry7 = tkinter.Entry(window)
+entry7.grid(row=5,column=1)
+
+
+entry8 = tkinter.Entry(window)
+entry8.grid(row=5,column=0)
+
+
+entry9 = tkinter.Entry(window)
+entry9.grid(row=5,column=2)
+
+label11=tkinter.Label(window, text="Дата заказа")
+label11.grid(row=6,column=0)
+
+combobox7=tkinter.ttk.Combobox(window,values = ["сегодня", "завтра"] )
+combobox7.grid(row=7,column=0)
+
+price=[] #список цен
+col=[] #список кол-ва каждой пиццы
+name=[] # список наименований пиц взаказе
+
+def col_pizz(x):
+    theSum = 0
+    for i in x:
+        theSum = theSum + i
+    return theSum
+
+def dictionary():
+    global d
+    print(entry7.get())
+    d['address']=entry7.get()
+    d['tm']=entry8.get()
+    d['contact'] = entry9.get()
+    d['data']=combobox7.get()
+    zakaz=[[f1, combobox1.get(), int(spinbox2.get())], [f2, combobox3.get(), int(spinbox4.get())], [f3, combobox6.get(), int(spinbox5.get())]]
+    if zakaz[0][1]=="":
+        zakaz[0][1]="S"
+    if zakaz[1][1]=="":
+        zakaz[1][1]="S"
+    if zakaz[2][1]=="":
+        zakaz[2][1]="S"
+    print(d, "\n", zakaz)
+
+    for i in range(len(zakaz)):
+        price.append(pizza[zakaz[i][0]]['size_price'][zakaz[i][1]])
+        col.append(zakaz[i][2])
+        name.append(zakaz[i][0])
+    price_without_discont=[col[i]*price[i] for i in range(len(col))]
+    total=0
+    for i in price_without_discont:
+        total=total+i # цена без всех скидок
+    col_pizz(col)
+
+
+
+
+
+    if col_pizz(col) >=3:
+        col[price.index(min(price))]=col[price.index(min(price))]-1
+    
+    # список стоимости каждого вида пицц
+    price1=[col[i]*price[i] for i in range(len(col))] 
+    cost=0
+    cost=0
+    if d['data'] =='завтра':
+        for i in price1:
+            cost=cost+i
+            cost=cost*0.95
+    else:
+        for i in price1:
+            cost=cost+i
+    
+    label10=tkinter.Label(window, text=cost)
+    label10.grid(row=7,column=1)
+    
+button1 = tkinter.Button(window, text='Заказать', command=dictionary) 
+button1.grid(row=8,column=1)
+
+button2 = tkinter.Button(window, text='Выход', command=window.destroy) 
+button2.grid(row=9,column=1)
+
+window.mainloop()                   
+
+print(price, col, name)
